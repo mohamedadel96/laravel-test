@@ -9,23 +9,26 @@ class FriendsController extends Controller
 {
     public function show() {
 
-        $friends = Friend::all();
+        $ActiveFriends = Friend::where('active', 1)->get();
+        $InActiveFriends = Friend::where('active', 0)->get();
         
-        // dd($friends);
-        return view('Friends', [
-            "friends" => $friends
-        ]);
+        // dd($ActiveFriends);
+        return view('friends', compact("ActiveFriends", "InActiveFriends"));
+        // return view('friends');
     }
 
     public function store() {
 
         $data = request()->validate([
             'name' => 'required|min:4',
-            'email' => 'required|email|unique:users'
+            'email' => 'required|email|unique:users',
+            'active' => 'required'
         ]);
 
         $friend = new Friend();
         $friend->name = request('name');
+        $friend->email = request('email');
+        $friend->active = request('active');
         $friend->save();
 
         return back();
